@@ -1,0 +1,9 @@
+node_modules/
+__tests__/coverage/
+__tests__/test.sqlite
+.env
+.env.test
+src/.env.js
+database.dev.sqlite
+
+yarn-error.log
