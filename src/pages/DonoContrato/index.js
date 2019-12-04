@@ -1,9 +1,10 @@
 import React, { } from 'react';
 
-function App() {
+
+function App(props) {
   return (
     <>
-      Dono do consorcio
+      Dono
     </>
   );
 }

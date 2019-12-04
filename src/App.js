@@ -36,12 +36,14 @@ function App() {
 
     switch (userAccount.typePerfil) {
       case ENUM_TYPE_LOGGED.CONSORCIADO:
-        return <Consorciado />
+        setClassAlignContainer('justify-content-center align-items-center')
+        return <Consorciado userAccount={userAccount} />
       case ENUM_TYPE_LOGGED.NOT_LOGGED:
         setClassAlignContainer('justify-content-center align-items-center')
         return <NotLogged />
       case ENUM_TYPE_LOGGED.DONO_CONTRATO:
-        return <DonoContrato />
+        setClassAlignContainer('justify-content-center align-items-center')
+        return <DonoContrato userAccount={userAccount} />
       default:
         setClassAlignContainer('justify-content-center align-items-center')
         return <NotLogged />
@@ -80,7 +82,7 @@ function App() {
       const [acc] = await web3.eth.getAccounts()
       if (!userAccount || acc !== userAccount.user) {
         // TODO: Verificar se é o dono ou consorciado
-        const typePerfil = ENUM_TYPE_LOGGED.DONO_CONTRATO
+        const typePerfil = ENUM_TYPE_LOGGED.CONSORCIADO
         setUserAccount({
           user: acc,
           typePerfil
