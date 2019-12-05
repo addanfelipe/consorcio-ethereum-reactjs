@@ -14,8 +14,8 @@ function App(props) {
       from: userAccount.user
     })
     // TODO: temp
-    // setIsConsorciadoCadastrado(true)
-    await init()
+    setIsConsorciadoCadastrado(true)
+    // await init()
   }
 
   const actionGetDadosConsorciado = async () => {
@@ -26,7 +26,9 @@ function App(props) {
   }
 
   const actionPagarParcela = async () => {
-    await etherConfig.contrato.methods.pagarParcela().send({ from: userAccount })
+    const value = 20 * 100000000000000000
+    await etherConfig.contrato.methods.pagarParcela(value).send({ from: userAccount, value })
+    // await etherConfig.contrato.methods.pagarParcela(dadosConsorciado.valorParcela).send({ from: userAccount })
     await actionGetDadosConsorciado()
   }
 
