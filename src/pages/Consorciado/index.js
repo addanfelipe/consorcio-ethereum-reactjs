@@ -1,35 +1,175 @@
-import React, { } from 'react';
-
-
-const styles = {
-  marginZero: { margin: '0' }
-}
+import React, { useEffect, useState } from 'react';
 
 
 function App(props) {
 
-  // const { contrato } = props
+  const { etherConfig, userAccount } = props
 
+  const [isConsorciadoCadastrado, setIsConsorciadoCadastrado] = useState(null)
+  const [dadosConsorciado, setDadosConsorciado] = useState(null)
+  const [listContemplados, setListContemplados] = useState(null)
 
-  return (
-    <>
-      <div className="card">
-        <div className="card-header">
-          {props.userAccount.user}
-        </div>
-        <div className="card-body">
-          <h5 className="card-title">Valor do crédito: 800 ether</h5>
-          <p className="card-text" style={{ ...styles.marginZero }}>Já foi contemplado: Sim</p>
-          <p className="card-text" style={{ ...styles.marginZero }}>Quanto já foi pago: 60 wei</p>
-          <p className="card-text" style={{ ...styles.marginZero }}>Quantos meses faltam: 75</p>
-          <p className="card-text" style={{ ...styles.marginZero }}>Valor da parcela: 20 wei</p>
-          <p className="card-text" style={{ ...styles.marginZero }}></p>
-          <p className="card-text">Vencimento: dia 12</p>
-          <div className="text-center">
-            <button className="btn btn-success">Pagar parcela</button>
+  const actionCadastrarNoConsorcio = async () => {
+    await etherConfig.contrato.methods.cadastrarConsorciado().call({
+      from: userAccount.user
+    })
+    // TODO: temp
+    // setIsConsorciadoCadastrado(true)
+    await init()
+  }
+
+  const actionGetDadosConsorciado = async () => {
+    const _dadosConsorciado = await etherConfig.contrato.methods.dadosConsorciado().call({
+      from: userAccount.user
+    })
+    setDadosConsorciado(_dadosConsorciado)
+  }
+
+  const actionPagarParcela = async () => {
+    await etherConfig.contrato.methods.pagarParcela().send({ from: userAccount })
+    await actionGetDadosConsorciado()
+  }
+
+  const actionShowListContemplados = async () => {
+    const lista = await etherConfig.contrato.methods.listaConsorciadoContemplado().call({
+      from: userAccount.user
+    })
+    setListContemplados(lista)
+    window.$('#modalShowListContemplados').modal('show')
+  }
+
+  const init = async () => {
+    const isConsorciadoCadastrado = await etherConfig.contrato.methods.isConsorsiadoCadastrado().call({
+      from: userAccount.user
+    })
+    setIsConsorciadoCadastrado(isConsorciadoCadastrado)
+  }
+
+  const ModalShowListContemplados = () => {
+    if (!listContemplados) {
+      return <></>
+    }
+
+    return (
+      <div className="modal fade" id="modalShowListContemplados" role="dialog" aria-labelledby="modalShowListContempladosLabel" aria-hidden="true">
+        <div className="modal-dialog" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="modalShowListContempladosLabel">Contemplados</h5>
+              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="list-group">
+                {listContemplados.map((item, index) => (
+                  <button key={index} type="button" className="list-group-item list-group-item-action">
+                    {index + 1} - {item}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    )
+  }
+
+  const Cadastrado = () => (
+    <>
+      <div className="card">
+        <div className="card-header">
+          {userAccount.user}
+        </div>
+        <div className="card-body">
+          <h5 className="card-title text-center">Valor do crédito: {dadosConsorciado.valorPremio} ether</h5>
+          <div className="text-center">
+            <button className="btn btn-success"
+              onClick={actionPagarParcela}>
+              {dadosConsorciado.isMesAtualPago ? 'Adiantar parcela' : 'Pagar parcela'}
+            </button>
+          </div>
+          <div>
+            <h6 className="my-0">Valor Parcela</h6>
+            <small className="text-muted">{dadosConsorciado.valorParcela} wie</small>
+          </div>
+          <div>
+            <h6 className="my-0">Já foi contemplado</h6>
+            <small className="text-muted">{dadosConsorciado.isConsorciadoContemplada ? 'Sim' : 'Não'}</small>
+          </div>
+          <div>
+            <h6 className="my-0">Parcelas pendentes</h6>
+            <small className="text-muted">
+              {dadosConsorciado.qtdParcelaPendente}/{dadosConsorciado.qtdTotalParcela}
+            </small>
+          </div>
+          <div>
+            <h6 className="my-0">Vencimento (dia)</h6>
+            <small className="text-muted">
+              {dadosConsorciado.diaVencimentoPagamento}
+            </small>
+          </div>
+        </div>
+        <div className="card-footer text-muted text-center">
+          <button className="btn btn-outline-dark btn-sm"
+            onClick={actionShowListContemplados}>
+            Contemplados
+          </button>
+        </div>
+      </div>
+
+      <ModalShowListContemplados />
+    </>
+  )
+
+  const Cadastrar = () => (
+    <div className="card">
+      <div className="card-header">
+        {userAccount.user}
+      </div>
+      <div className="card-body">
+        <h5 className="card-title text-center">Valor do crédito: 800 ether</h5>
+        <div>
+          <h6 className="my-0">Valor Parcela</h6>
+          <small className="text-muted">20 wie</small>
+        </div>
+        <div className="text-center">
+          <button className="btn btn-success"
+            onClick={actionCadastrarNoConsorcio}>
+            Entrar no consorcio
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+  const Page = () => {
+    if (isConsorciadoCadastrado === null) {
+      return <div className="text-center">Carregando...</div>
+    } else if (!isConsorciadoCadastrado) {
+      return <Cadastrar />
+    } else if (dadosConsorciado) {
+      return <Cadastrado />
+    } else {
+      return <div className="text-center">Carregando...</div>
+    }
+  }
+
+  useEffect(() => {
+    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (isConsorciadoCadastrado) {
+      actionGetDadosConsorciado()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isConsorciadoCadastrado])
+
+  return (
+    <>
+      <Page />
     </>
   );
 }

@@ -12,19 +12,19 @@ const styles = {
   }
 }
 
-
 const ENUM_TYPE_LOGGED = {
   DONO_CONTRATO: 2,
   CONSORCIADO: 3,
 }
 
+let etherConfig = null
+
 
 function App() {
-  let contrato = null
   const [classAlignContainer, setClassAlignContainer] = useState('')
   const [userAccount, setUserAccount] = useState(null)
 
-  const NotLogged = () => (<h1 style={{ textAlign: 'center' }}>Entre no MetaMask para continuar..</h1>)
+  const NotLogged = () => (<h1 style={{ textAlign: 'center' }}>Entre no MetaMask para continuar...</h1>)
 
   const PageHome = () => {
     if (!userAccount) {
@@ -35,10 +35,10 @@ function App() {
     switch (userAccount.typePerfil) {
       case ENUM_TYPE_LOGGED.CONSORCIADO:
         setClassAlignContainer('justify-content-center align-items-center')
-        return <Consorciado userAccount={userAccount} />
+        return <Consorciado userAccount={userAccount} etherConfig={etherConfig} />
       case ENUM_TYPE_LOGGED.DONO_CONTRATO:
         setClassAlignContainer('justify-content-center align-items-center')
-        return <DonoContrato userAccount={userAccount} contrato={contrato} />
+        return <DonoContrato userAccount={userAccount} etherConfig={etherConfig} />
       default:
         setClassAlignContainer('justify-content-center align-items-center')
         return <NotLogged />
@@ -66,32 +66,20 @@ function App() {
   }
 
   const startContrato = async () => {
-    const web3 = await startEthereum()
+    if (!etherConfig) {
+      const web3 = await startEthereum()
+      const contratoAddress = process.env.REACT_APP_HASH_CONTRATO
+      const contrato = new web3.eth.Contract(abi, contratoAddress)
+      etherConfig = { web3, contrato }
+    }
 
-    const contratoAddress = process.env.REACT_APP_HASH_CONTRATO
-    contrato = new web3.eth.Contract(abi, contratoAddress)
-    // console.log('Contrato: ', contrato)
-
-    // setInterval(async function () {
     try {
-      const [acc] = await web3.eth.getAccounts()
-      // console.log('User load: ', acc)
-      // console.log('User system: ', userAccount)
+      const [acc] = await etherConfig.web3.eth.getAccounts()
       if (acc && (!userAccount || acc !== userAccount.user)) {
-        // console.log('User load: ', acc)
-        // console.log('User system: ', userAccount)
-        // console.log('usuario entrou')
-        // TODO: Verificar se é o dono ou consorciado
-        const isDono = await contrato.methods.isDono().call({ from: acc })
-        console.log(isDono)
-        console.log('a')
-        const lista = await contrato.methods.listaConsorciadoContemplado().call({ from: acc })
-        console.log('b')
-        console.log(lista)
+        const isDono = await etherConfig.contrato.methods.isDono().call({ from: acc })
         const typePerfil = isDono ? ENUM_TYPE_LOGGED.DONO_CONTRATO : ENUM_TYPE_LOGGED.CONSORCIADO
         setUserAccount({ user: acc, typePerfil })
       } else if (!acc && userAccount) {
-        console.log('usuario saiu')
         setUserAccount(null)
       }
     } catch (error) {
@@ -110,7 +98,7 @@ function App() {
     <>
       <div className="container" style={styles.fullSize}>
         <div style={styles.fullSize} className={`row ${classAlignContainer}`}>
-          <div className="col-sm-12 col-lg-6">
+          <div className="col-sm-12 col-lg-8">
             <PageHome />
           </div>
         </div>

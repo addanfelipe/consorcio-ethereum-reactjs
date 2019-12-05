@@ -16,7 +16,8 @@ const abi = [
     {
         "constant": false,
         "inputs": [],
-        "name": "isConsorciadoCadastrado",
+        // "name": "isConsorciadoCadastrado",
+        "name": "isConsorsiadoCadastrado",
         "outputs": [
             {
                 "name": "",
@@ -51,11 +52,11 @@ const abi = [
                 "type": "uint256"
             },
             {
-                "name": "valorAGanhar",
+                "name": "valorParcela",
                 "type": "uint256"
             },
             {
-                "name": "valorDoPremio",
+                "name": "valorPremio",
                 "type": "uint256"
             },
             {
