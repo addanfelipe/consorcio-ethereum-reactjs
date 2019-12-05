@@ -30,6 +30,28 @@ const abi = [
     {
         "constant": false,
         "inputs": [],
+        "name": "dadosConsorcio",
+        "outputs": [
+            {
+                "name": "valorPremio",
+                "type": "uint256"
+            },
+            {
+                "name": "valorParcela",
+                "type": "uint256"
+            },
+            {
+                "name": "qtdTotalParcela",
+                "type": "uint256"
+            },
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
         "name": "cadastrarConsorciado",
         "outputs": [
         ],

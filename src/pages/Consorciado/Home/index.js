@@ -20,7 +20,6 @@ function App(props) {
     await etherConfig.contrato.methods.pagarParcela().send({
       from: userAccount.user, value: dadosConsorciado.valorParcela
     })
-    // await etherConfig.contrato.methods.pagarParcela(dadosConsorciado.valorParcela).send({ from: userAccount })
     await actionGetDadosConsorciado()
   }
 
@@ -85,14 +84,20 @@ function App(props) {
         <div className="card-body">
           <h5 className="card-title text-center">Valor do crédito: {dadosConsorciado.valorPremio / 1000000000000000000} ether</h5>
           <div className="text-center">
-            <button className="btn btn-success"
-              onClick={actionPagarParcela}>
-              {dadosConsorciado.isMesAtualPago ? 'Adiantar parcela' : 'Pagar parcela'}
-            </button>
+            {
+              dadosConsorciado.qtdParcelaPendente === '0' ? (
+                <h5 className="text-center text-success">Você já pagou todas as parcelas!!!</h5>
+              ) : (
+                  <button className="btn btn-success"
+                    onClick={actionPagarParcela}>
+                    {dadosConsorciado.isMesAtualPago ? 'Adiantar parcela' : 'Pagar parcela'}
+                  </button>
+                )
+            }
           </div>
           <div>
             <h6 className="my-0">Valor Parcela</h6>
-            <small className="text-muted">{dadosConsorciado.valorParcela / 1000000000000000000} ether</small>
+            <small className="text-muted">{dadosConsorciado.valorParcela} wei</small>
           </div>
           <div>
             <h6 className="my-0">Já foi contemplado</h6>
