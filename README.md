@@ -5,7 +5,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In the project directory, you can run:
 
 
-### crirar arquivo src/.env.js a partir de src/.example.env.js
+### crirar arquivo src/.env a partir de src/.example.env
 
 ```Dinifir endereço da api```
 
