@@ -86,6 +86,10 @@ function App() {
       <div className="container" style={styles.fullSize}>
         <div style={styles.fullSize} className={`row ${classAlignContainer}`}>
           <div className="col-sm-12 col-lg-8">
+            <div className="text-center" style={{marginBottom: '20px'}}>
+              <h6>{process.env.REACT_APP_HASH_CONTRATO}</h6>
+              <span>Contrato</span>
+            </div>
             <PageHome />
           </div>
         </div>
