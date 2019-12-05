@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import Consorciado from './pages/Consorciado'
+import Consorciado from './pages/Consorciado/Index'
 import DonoContrato from './pages/DonoContrato'
 import abi from './services/abi'
 

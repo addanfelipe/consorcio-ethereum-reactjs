@@ -16,8 +16,7 @@ const abi = [
     {
         "constant": false,
         "inputs": [],
-        // "name": "isConsorciadoCadastrado",
-        "name": "isConsorsiadoCadastrado",
+        "name": "isConsorciadoCadastrado",
         "outputs": [
             {
                 "name": "",

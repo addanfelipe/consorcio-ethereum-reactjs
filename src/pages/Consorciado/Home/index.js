@@ -5,18 +5,9 @@ function App(props) {
 
   const { etherConfig, userAccount } = props
 
-  const [isConsorciadoCadastrado, setIsConsorciadoCadastrado] = useState(null)
   const [dadosConsorciado, setDadosConsorciado] = useState(null)
   const [listContemplados, setListContemplados] = useState(null)
 
-  const actionCadastrarNoConsorcio = async () => {
-    await etherConfig.contrato.methods.cadastrarConsorciado().call({
-      from: userAccount.user
-    })
-    // TODO: temp
-    setIsConsorciadoCadastrado(true)
-    // await init()
-  }
 
   const actionGetDadosConsorciado = async () => {
     const _dadosConsorciado = await etherConfig.contrato.methods.dadosConsorciado().call({
@@ -38,13 +29,6 @@ function App(props) {
     })
     setListContemplados(lista)
     window.$('#modalShowListContemplados').modal('show')
-  }
-
-  const init = async () => {
-    const isConsorciadoCadastrado = await etherConfig.contrato.methods.isConsorsiadoCadastrado().call({
-      from: userAccount.user
-    })
-    setIsConsorciadoCadastrado(isConsorciadoCadastrado)
   }
 
   const ModalShowListContemplados = () => {
@@ -77,7 +61,13 @@ function App(props) {
     )
   }
 
-  const Cadastrado = () => (
+
+  useEffect(() => {
+    actionGetDadosConsorciado()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  return (
     <>
       <div className="card">
         <div className="card-header">
@@ -121,57 +111,6 @@ function App(props) {
       </div>
 
       <ModalShowListContemplados />
-    </>
-  )
-
-  const Cadastrar = () => (
-    <div className="card">
-      <div className="card-header">
-        {userAccount.user}
-      </div>
-      <div className="card-body">
-        <h5 className="card-title text-center">Valor do crédito: 800 ether</h5>
-        <div>
-          <h6 className="my-0">Valor Parcela</h6>
-          <small className="text-muted">20 wie</small>
-        </div>
-        <div className="text-center">
-          <button className="btn btn-success"
-            onClick={actionCadastrarNoConsorcio}>
-            Entrar no consorcio
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-
-  const Page = () => {
-    if (isConsorciadoCadastrado === null) {
-      return <div className="text-center">Carregando...</div>
-    } else if (!isConsorciadoCadastrado) {
-      return <Cadastrar />
-    } else if (dadosConsorciado) {
-      return <Cadastrado />
-    } else {
-      return <div className="text-center">Carregando...</div>
-    }
-  }
-
-  useEffect(() => {
-    init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    if (isConsorciadoCadastrado) {
-      actionGetDadosConsorciado()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isConsorciadoCadastrado])
-
-  return (
-    <>
-      <Page />
     </>
   );
 }
