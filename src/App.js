@@ -58,9 +58,11 @@ function App() {
     }
     try {
       const [acc] = await etherConfig.web3.eth.getAccounts()
-      if (acc && !userAccount) {
+      if (acc && (!userAccount || acc !== userAccount.user)) {
+        console.log('login: ', acc)
         loginUserAccount(acc)
       } else if (!acc && userAccount) {
+        console.log('logout: ', userAccount)
         setUserAccount(null)
       }
     } catch (error) {
