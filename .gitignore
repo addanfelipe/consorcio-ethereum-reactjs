@@ -1,6 +1,7 @@
 node_modules/
 __tests__/coverage/
 __tests__/test.sqlite
+.env
 database.dev.sqlite
 
 yarn-error.log
