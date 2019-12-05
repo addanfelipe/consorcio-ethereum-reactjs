@@ -13,6 +13,7 @@ function App(props) {
     const _dadosConsorciado = await etherConfig.contrato.methods.dadosConsorciado().call({
       from: userAccount.user
     })
+    console.log('dados consorciado: ', _dadosConsorciado)
     setDadosConsorciado(_dadosConsorciado)
   }
 
