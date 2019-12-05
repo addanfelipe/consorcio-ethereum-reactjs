@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import { useInterval } from './utils/react'
 
 import Consorciado from './pages/Consorciado/Index'
 import DonoContrato from './pages/DonoContrato'
-import abi from './services/abi'
+import connectionEthereum from './services/connectionEthereum'
 
 
 const styles = {
@@ -45,40 +46,20 @@ function App() {
     }
   }
 
-  const startEthereum = async () => {
-    let web3Provider = null
-    if (window.ethereum) { // Modern dapp browsers...
-      window.ethereum.autoRefreshOnNetworkChange = false // remove alert
-      web3Provider = window.ethereum
-      try { // Request account access
-        window.ethereum.enable()
-      } catch (error) { // User denied account access...
-        console.error("User denied account access")
-      }
-    } else if (window.web3) { // Legacy dapp browsers...
-      web3Provider = window.web3.currentProvider
-    } else { // If no injected web3 instance is detected, fall back to Ganache
-      console.log('No web3? You should consider trying MetaMask!')
-      web3Provider = new window.Web3.providers.HttpProvider('http://localhost:7545')
-    }
-
-    return new window.Web3(web3Provider)
+  const loginUserAccount = async (userAddres) => {
+    const isDono = await etherConfig.contrato.methods.isDono().call({ from: userAddres })
+    const typePerfil = isDono ? ENUM_TYPE_LOGGED.DONO_CONTRATO : ENUM_TYPE_LOGGED.CONSORCIADO
+    setUserAccount({ user: userAddres, typePerfil })
   }
 
   const startContrato = async () => {
     if (!etherConfig) {
-      const web3 = await startEthereum()
-      const contratoAddress = process.env.REACT_APP_HASH_CONTRATO
-      const contrato = new web3.eth.Contract(abi, contratoAddress)
-      etherConfig = { web3, contrato }
+      etherConfig = await connectionEthereum()
     }
-
     try {
       const [acc] = await etherConfig.web3.eth.getAccounts()
-      if (acc && (!userAccount || acc !== userAccount.user)) {
-        const isDono = await etherConfig.contrato.methods.isDono().call({ from: acc })
-        const typePerfil = isDono ? ENUM_TYPE_LOGGED.DONO_CONTRATO : ENUM_TYPE_LOGGED.CONSORCIADO
-        setUserAccount({ user: acc, typePerfil })
+      if (acc && !userAccount) {
+        loginUserAccount(acc)
       } else if (!acc && userAccount) {
         setUserAccount(null)
       }
@@ -86,13 +67,17 @@ function App() {
       console.error(error)
       setUserAccount(null)
     }
-    // }, 1000)
   }
 
   useEffect(() => {
     startContrato()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userAccount])
+  }, [])
+
+  useInterval(() => {
+    startContrato()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [2000])
 
   return (
     <>

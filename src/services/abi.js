@@ -122,7 +122,7 @@ const abi = [
                 "type": "uint256"
             },
             {
-                "name": "valorDoPremioPorConsorciado",
+                "name": "valorPremioPorConsorciado",
                 "type": "uint256"
             },
             {
@@ -145,9 +145,27 @@ const abi = [
                 "name": "totalValorTaxaDonoDisponivel",
                 "type": "uint256"
             },
+            {
+                "name": "qtdConsorciadoInscritos",
+                "type": "uint256"
+            },
+            {
+                "name": "daySorteio",
+                "type": "uint256"
+            },
         ],
         "payable": false,
         "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "constant": false,
+        "inputs": [],
+        "name": "sortear",
+        "outputs": [
+        ],
+        "payable": true,
+        "stateMutability": "payable",
         "type": "function"
     },
     {
