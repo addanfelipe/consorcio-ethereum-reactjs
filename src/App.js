@@ -14,7 +14,6 @@ const styles = {
 
 
 const ENUM_TYPE_LOGGED = {
-  NOT_LOGGED: 1,
   DONO_CONTRATO: 2,
   CONSORCIADO: 3,
 }
@@ -25,25 +24,21 @@ function App() {
   const [classAlignContainer, setClassAlignContainer] = useState('')
   const [userAccount, setUserAccount] = useState(null)
 
-  const CarregandoLogin = () => (<h1 style={{ textAlign: 'center' }}>Logando...</h1>)
-  const NotLogged = () => (<h1 style={{ textAlign: 'center' }}>Não está logado...</h1>)
+  const NotLogged = () => (<h1 style={{ textAlign: 'center' }}>Entre no MetaMask para continuar..</h1>)
 
   const PageHome = () => {
     if (!userAccount) {
       setClassAlignContainer('justify-content-center align-items-center')
-      return <CarregandoLogin />
+      return <NotLogged />
     }
 
     switch (userAccount.typePerfil) {
       case ENUM_TYPE_LOGGED.CONSORCIADO:
         setClassAlignContainer('justify-content-center align-items-center')
         return <Consorciado userAccount={userAccount} />
-      case ENUM_TYPE_LOGGED.NOT_LOGGED:
-        setClassAlignContainer('justify-content-center align-items-center')
-        return <NotLogged />
       case ENUM_TYPE_LOGGED.DONO_CONTRATO:
         setClassAlignContainer('justify-content-center align-items-center')
-        return <DonoContrato userAccount={userAccount} />
+        return <DonoContrato userAccount={userAccount} contrato={contrato} />
       default:
         setClassAlignContainer('justify-content-center align-items-center')
         return <NotLogged />
@@ -75,32 +70,41 @@ function App() {
 
     const contratoAddress = process.env.REACT_APP_HASH_CONTRATO
     contrato = new web3.eth.Contract(abi, contratoAddress)
-    console.log('Contrato: ', contrato)
+    // console.log('Contrato: ', contrato)
 
     // setInterval(async function () {
     try {
       const [acc] = await web3.eth.getAccounts()
-      if (!userAccount || acc !== userAccount.user) {
+      // console.log('User load: ', acc)
+      // console.log('User system: ', userAccount)
+      if (acc && (!userAccount || acc !== userAccount.user)) {
+        // console.log('User load: ', acc)
+        // console.log('User system: ', userAccount)
+        // console.log('usuario entrou')
         // TODO: Verificar se é o dono ou consorciado
-        const typePerfil = ENUM_TYPE_LOGGED.CONSORCIADO
-        setUserAccount({
-          user: acc,
-          typePerfil
-        })
+        const isDono = await contrato.methods.isDono().call({ from: acc })
+        console.log(isDono)
+        console.log('a')
+        const lista = await contrato.methods.listaConsorciadoContemplado().call({ from: acc })
+        console.log('b')
+        console.log(lista)
+        const typePerfil = isDono ? ENUM_TYPE_LOGGED.DONO_CONTRATO : ENUM_TYPE_LOGGED.CONSORCIADO
+        setUserAccount({ user: acc, typePerfil })
+      } else if (!acc && userAccount) {
+        console.log('usuario saiu')
+        setUserAccount(null)
       }
     } catch (error) {
-      setUserAccount({
-        user: null,
-        typePerfil: ENUM_TYPE_LOGGED.NOT_LOGGED
-      })
+      console.error(error)
+      setUserAccount(null)
     }
-    // }, 100)
+    // }, 1000)
   }
 
   useEffect(() => {
     startContrato()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [userAccount])
 
   return (
     <>
