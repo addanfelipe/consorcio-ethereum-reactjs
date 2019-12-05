@@ -51,11 +51,11 @@ const abi = [
                 "type": "uint256"
             },
             {
-                "name": "valorParcela",
+                "name": "valorPremio",
                 "type": "uint256"
             },
             {
-                "name": "valorPremio",
+                "name": "valorParcela",
                 "type": "uint256"
             },
             {

@@ -17,8 +17,9 @@ function App(props) {
   }
 
   const actionPagarParcela = async () => {
-    const value = 20 * 100000000000000000
-    await etherConfig.contrato.methods.pagarParcela(value).send({ from: userAccount, value })
+    await etherConfig.contrato.methods.pagarParcela().send({
+      from: userAccount.user, value: dadosConsorciado.valorParcela
+    })
     // await etherConfig.contrato.methods.pagarParcela(dadosConsorciado.valorParcela).send({ from: userAccount })
     await actionGetDadosConsorciado()
   }
@@ -67,6 +68,14 @@ function App(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  if (!dadosConsorciado) {
+    return (
+      <>
+        <h5 className="text-center">Carregando dados...</h5>
+      </>
+    )
+  }
+
   return (
     <>
       <div className="card">
@@ -74,7 +83,7 @@ function App(props) {
           {userAccount.user}
         </div>
         <div className="card-body">
-          <h5 className="card-title text-center">Valor do crédito: {dadosConsorciado.valorPremio} ether</h5>
+          <h5 className="card-title text-center">Valor do crédito: {dadosConsorciado.valorPremio / 1000000000000000000} ether</h5>
           <div className="text-center">
             <button className="btn btn-success"
               onClick={actionPagarParcela}>
@@ -83,7 +92,7 @@ function App(props) {
           </div>
           <div>
             <h6 className="my-0">Valor Parcela</h6>
-            <small className="text-muted">{dadosConsorciado.valorParcela} wie</small>
+            <small className="text-muted">{dadosConsorciado.valorParcela / 1000000000000000000} ether</small>
           </div>
           <div>
             <h6 className="my-0">Já foi contemplado</h6>

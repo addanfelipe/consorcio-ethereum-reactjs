@@ -6,13 +6,15 @@ function App(props) {
   const { etherConfig, userAccount, actionPostCadastrado } = props
 
   const actionCadastrarNoConsorcio = async () => {
-    await etherConfig.contrato.methods.cadastrarConsorciado().call({
+    await etherConfig.contrato.methods.cadastrarConsorciado().send({
       from: userAccount.user
     })
 
     const isConsorciadoCadastrado = await etherConfig.contrato.methods.isConsorciadoCadastrado().call({
       from: userAccount.user
     })
+
+    console.log(isConsorciadoCadastrado)
 
     if (isConsorciadoCadastrado) {
       actionPostCadastrado()
