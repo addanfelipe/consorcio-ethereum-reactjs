@@ -24,6 +24,7 @@ let etherConfig = null
 function App() {
   const [classAlignContainer, setClassAlignContainer] = useState('')
   const [userAccount, setUserAccount] = useState(null)
+  const [labelPage, setLabelPage] = useState('')
 
   const NotLogged = () => (<h1 style={{ textAlign: 'center' }}>Entre no MetaMask para continuar...</h1>)
 
@@ -36,9 +37,11 @@ function App() {
     switch (userAccount.typePerfil) {
       case ENUM_TYPE_LOGGED.CONSORCIADO:
         setClassAlignContainer('justify-content-center align-items-center')
+        setLabelPage('Página do Consorciado')
         return <Consorciado userAccount={userAccount} etherConfig={etherConfig} />
       case ENUM_TYPE_LOGGED.DONO_CONTRATO:
         setClassAlignContainer('justify-content-center align-items-center')
+        setLabelPage('Página do Dono')
         return <DonoContrato userAccount={userAccount} etherConfig={etherConfig} />
       default:
         setClassAlignContainer('justify-content-center align-items-center')
@@ -86,11 +89,17 @@ function App() {
       <div className="container" style={styles.fullSize}>
         <div style={styles.fullSize} className={`row ${classAlignContainer}`}>
           <div className="col-sm-12 col-lg-8">
-            <div className="text-center" style={{marginBottom: '20px'}}>
-              <h6>{process.env.REACT_APP_HASH_CONTRATO}</h6>
-              <span>Contrato</span>
+
+            <div class="my-5 text-muted text-center text-small">
+              <h3 class="mb-1">{labelPage}</h3>
             </div>
+
             <PageHome />
+
+            <div class="my-5 text-muted text-center text-small">
+              <p class="mb-1">{process.env.REACT_APP_HASH_CONTRATO}</p>
+              <p class="mb-1">Contrato</p>
+            </div>
           </div>
         </div>
       </div>
