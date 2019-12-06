@@ -62,10 +62,8 @@ contract Consorcio{
 
     // funcao que permite um endereco ethereum se cadastrar no consorcio    
     function cadastrarConsorciado() public {
-        //require(dono != msg.sender, "you are not authorized");
+        require(dono != msg.sender, "you are not authorized");
         require(enderecoCotas.length != qntdParticipantes, "O consorcio está lotado");
-
-        //if(cotas[msg.sender].prazo != 0){ return 0; }
 
         enderecoCotas.push(msg.sender);
 
